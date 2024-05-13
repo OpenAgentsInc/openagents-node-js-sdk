@@ -29,6 +29,7 @@ jobs:
             TAG=${TAG#v}
             sed -i "s/\"version\": \".*\"/\"version\": \"$TAG\"/g" package.json
         fi
+        npm i
         npm run build
         mkdir -p dist
         npm pack --pack-destination dist/
