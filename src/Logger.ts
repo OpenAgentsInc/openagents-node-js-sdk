@@ -1,13 +1,14 @@
 import goodbye from "graceful-goodbye";
 enum LogLevel {
-    error = "error",
-    warn = "warn",
-    info = "info",
-    debug = "debug",
-    fine = "fine",
-    finer = "finer",
     finest = "finest",
+    finer = "finer",
+    fine = "fine",
+    debug = "debug",
+    info = "info",
+    warn = "warn",
+    error = "error",
 }
+
 
 type OpenObserveOptions = {
     stream: string;
