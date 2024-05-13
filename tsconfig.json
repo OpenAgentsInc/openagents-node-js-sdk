@@ -1,12 +1,13 @@
 {
     "compilerOptions": {
-        "outDir": "build/js",
+        "outDir": "build/",
         "skipLibCheck": true,
         "target": "ES6",
         "moduleResolution": "Node",
         "module": "ES6",
         "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "declaration": true
     },
     "include": ["src/**/*.ts"],
     "ts-node": {
