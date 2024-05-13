@@ -24,15 +24,10 @@ jobs:
 
     - name: Build
       run: |
-        TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-        if [[ -n "$TAG" ]]; then
-            TAG=${TAG#v}
-            sed -i "s/\"version\": \".*\"/\"version\": \"$TAG\"/g" package.json
-        fi
-        npm run build
-        mkdir -p dist
-        npm pack --pack-destination dist/
-   
+        bash build.sh
+    
+        
+        
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
@@ -49,7 +44,7 @@ jobs:
     - name: Publish to github package registry
       if: github.event_name == 'release'
       run: |
-        cd build/javascript
+        cd build
         echo "Rename package to ${{ github.repository_owner }}/${{github.event.repository.name}} for github package registry"
         sed -i 's/"name": "openagents-node-js-sdk"/"name": "@${{ github.repository_owner }}\/${{github.event.repository.name}}"/g' package.json
         echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > .npmrc

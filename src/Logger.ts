@@ -202,7 +202,6 @@ export default class Logger {
 
     error(...args) {
         this.log("error", ...args);
-        console.error(new Error().stack);
     }
 
     debug(...args) {
