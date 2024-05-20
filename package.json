@@ -31,8 +31,8 @@
         "tsc-alias": "^1.8.8",
         "typescript": "^5.4.3"
     },
-    "main": "build/js/index.js",
-    "types": "build/js/index.d.ts",
+    "main": "build/index.js",
+    "types": "build/index.d.ts",
     "files": [
         "*.js",
         "*.d.ts"
