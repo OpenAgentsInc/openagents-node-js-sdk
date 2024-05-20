@@ -301,9 +301,9 @@ export default class OpenAgentsNode {
     }
 
     public async start(poolHost?: string, poolPort?: number, poolSsl?: boolean, loopInterval?: number) {
-        this.poolAddress = poolHost || process.env.POOL_ADDRESS || "127.0.0.1";
-        this.poolPort = poolPort || parseInt(process.env.POOL_PORT || "5000");
-        this.poolSsl = poolSsl || process.env.POOL_SSL == "true";
+        this.poolAddress = poolHost || process.env.POOL_ADDRESS || "playground.openagents.com";
+        this.poolPort = poolPort || parseInt(process.env.POOL_PORT || "6021");
+        this.poolSsl = typeof poolSsl == "undefined" ? ((process.env.POOL_SSL || "true") == "true") : poolSsl;
         this.loopInterval = loopInterval || 1000.0 / parseInt(process.env.NODE_TPS || "10");
 
         this.reannounce();
