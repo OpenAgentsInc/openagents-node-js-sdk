@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "",
     "scripts": {
-        "build": "node generate_imports.cjs&&tsc"
+        "build": "node generate_imports.cjs&&tsc&&tsc-alias"
     },
     "author": "OpenAgentsInc",
     "license": "",
