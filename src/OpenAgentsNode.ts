@@ -76,7 +76,7 @@ export default class OpenAgentsNode {
                 },
             });
 
-            this.getLogger().info("Connecting to pool at ", this.poolAddress, ":", this.poolPort);
+            this.getLogger().info("Connecting to pool at ", this.poolAddress, ":", this.poolPort, " ssl =", this.poolSsl);
 
             this.client = new PoolConnectorClient(this.channel) as GrpcClient;
 
