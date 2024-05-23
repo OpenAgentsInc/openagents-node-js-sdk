@@ -1,4 +1,4 @@
-import { Job, JobInput, JobStatus } from "openagents-grpc-proto";
+import { Job, JobInput, JobStatus, JobState } from "openagents-grpc-proto";
 
 import JobRunner from './JobRunner';
 import OpenAgentsNode from './OpenAgentsNode';
@@ -304,36 +304,67 @@ export default class JobContext {
         return res;
     }
 
-    public async waitForContent(job:Job|Promise<Job>){
+    public async waitForContent(job:Job|Promise<Job>):Promise<string>{
         const waited=await this.waitFor(job);
-        return waited.result.content;
+        if(waited){
+            for (const state of waited.results) {
+                if (state.status == JobStatus.SUCCESS) {
+                    return state.result.content;
+                }
+            }
+        }
+        throw new Error("Job failed");
     }
 
-    public async waitFor(job: Job|Promise<Job>): Promise<Job | undefined> {
+
+    public async waitForContents(job:Job|Promise<Job>):Promise<JobState[]>{
+        const choices = [];
+        const waited = await this.waitFor(job);
+        if (waited) {
+            for (const state of waited.results) {
+                if (state.status == JobStatus.SUCCESS) {
+                    choices.push(state);
+                }
+            }
+        }
+        return choices;
+    }
+
+    public async waitFor(job: Job|Promise<Job>, nExpectedResults = 1,  maxWaitTime = 1000*60*2): Promise<Job | undefined> {
         job=await job;
         const logger = this.getLogger();
         const client = this.node.getClient();
         const jobId = job.id;
         const logPassthrough = true;
-        let lastLog = 0;
+        let t = Date.now();
+        const trackedLogs = [];
+
         while (true) {
             try {
-                const job = await client.r(client.getJob({ jobId, wait: 1000 }));
-                if (job) {
-                    if (logPassthrough) {
-                        for (const log of job.state.logs) {
-                            if (log.timestamp > lastLog) {
-                                logger.info(log.log);
-                                lastLog = log.timestamp;
-                            }
-                        }
-                    }
-                    if (job.state.status == JobStatus.SUCCESS && job.result.timestamp) {
-                        return job;
-                    }
-                }
+                const job = await client.r(client.getJob({ jobId, wait: 1000 , nResultsToWait : nExpectedResults}));
+                 if (job) {
+                     let successes = 0;
+                     for (const state of job.results) {
+                         // propagate logs
+                         if (logPassthrough) {
+                             for (const log of state.logs) {
+                                 if (!trackedLogs.includes(log.id)) {
+                                    trackedLogs.push(log.id);
+                                    logger.info(log.log);
+                                 }
+                             }
+                         }
+                         if (state.status == JobStatus.SUCCESS) successes++;
+                         if (successes >= nExpectedResults) {
+                             return job;
+                         }
+                     }
+                 }
             } catch (e) {
                 // console.error(e);
+            }
+            if (Date.now() - t > maxWaitTime) {
+                break;
             }
             await new Promise((res) => setTimeout(res, 100));
         }
