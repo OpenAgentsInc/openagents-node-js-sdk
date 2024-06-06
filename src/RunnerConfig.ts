@@ -17,6 +17,11 @@ export type JobFilter = {
     filterByDescription?: string;
     filterById?: string;
     filterByKind?: string;
+    filterByBids?: [{
+        amount: number;
+        currency: string;
+        protocol: string;
+    }];
 };
 
 export type SocketsSchema = {

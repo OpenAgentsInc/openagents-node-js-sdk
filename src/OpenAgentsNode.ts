@@ -3,7 +3,7 @@ import {NodeMetaData} from "./NodeConfig";
 import NodeConfig from "./NodeConfig";
 import JobRunner from "./JobRunner";
 import Logger from "./Logger";
-import { PoolConnectorClient  } from "openagents-grpc-proto";
+import {  PoolConnectorClient  } from "openagents-grpc-proto";
 import * as GRPC from "@grpc/grpc-js";
 import type { UnaryCall, RpcOutputStream, ServerStreamingCall, RpcOptions, ClientStreamingCall, RpcInputStream } from "@protobuf-ts/runtime-rpc";
 import { GrpcTransport } from "@protobuf-ts/grpc-transport";
@@ -216,6 +216,15 @@ export default class OpenAgentsNode {
                     filterByKind: filter.filterByKind,
                     wait: 60000,
                     excludeId: this.lockedJobs.map((j) => j.jobId),
+                    filterByBids: filter.filterByBids
+                        ? filter.filterByBids
+                        : [
+                              {
+                                  amount: 0,
+                                  currency: "bitcoin",
+                                  protocol: "lightning",
+                              }
+                          ],
                 })
             );
             jobs.push(...res.jobs);
